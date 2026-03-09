@@ -12,6 +12,7 @@
     "publish": true
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.6",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.6",
     "hono": "4.12.5",

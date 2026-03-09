@@ -14,6 +14,16 @@ import {
   TestimonialCreateSchema,
   StatusUpdateSchema,
 } from "./schema";
+import type {
+  CreateAppointmentRequest,
+  UpdateStatusRequest,
+  CreateBlogPostRequest,
+  UpdateBlogPostRequest,
+  CreateResearchRequest,
+  CreateContactRequest,
+  CreateTestimonialRequest,
+  DBBlogPost,
+} from "../shared/types";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -41,6 +51,7 @@ app.use("*", async (c, next) => {
 });
 
 // JWT Middleware wrapper
+// eslint-disable-line @typescript-eslint/no-explicit-any
 const verifyToken = async (c: any, next: any) => {
   const secret = c.env.JWT_SECRET_KEY || "manoshastra-default-secret";
   const jwtMiddleware = jwt({
@@ -61,7 +72,7 @@ app.post(
   "/api/admin/login",
   zValidator("json", AdminLoginSchema),
   async (c) => {
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as { password: string };
     const adminPassword = c.env.ADMIN_PASSWORD || "ManoShastra@2024";
     const secret = c.env.JWT_SECRET_KEY || "manoshastra-default-secret";
 
@@ -84,7 +95,7 @@ app.post(
   "/api/appointments",
   zValidator("json", AppointmentCreateSchema),
   async (c) => {
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as CreateAppointmentRequest;
     const db = c.env.DB;
 
     const id = makeId();
@@ -124,27 +135,26 @@ app.get("/api/admin/appointments", verifyToken, async (c) => {
 });
 
 app.patch(
-  "/api/admin/appointments/:appt_id",
+  "/api/admin/appointments/:id/status",
   verifyToken,
   zValidator("json", StatusUpdateSchema),
   async (c) => {
-    const appt_id = c.req.param("appt_id");
-    const body = c.req.valid("json");
+    const data = c.req.valid("json") as UpdateStatusRequest;
     const db = c.env.DB;
 
     await db
       .prepare("UPDATE appointments SET status = ? WHERE id = ?")
-      .bind(body.status, appt_id)
+      .bind(data.status, c.req.param("id"))
       .run();
     const result = await db
       .prepare("SELECT * FROM appointments WHERE id = ?")
-      .bind(appt_id)
+      .bind(c.req.param("id"))
       .first();
     return c.json(cleanDoc(result));
   }
 );
 
-// Blog
+// Blog Posts
 app.get("/api/blog", async (c) => {
   const page = parseInt(c.req.query("page") || "1");
   const limit = parseInt(c.req.query("limit") || "9");
@@ -192,7 +202,7 @@ app.post(
   verifyToken,
   zValidator("json", BlogPostCreateSchema),
   async (c) => {
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as CreateBlogPostRequest;
     const db = c.env.DB;
 
     const id = makeId();
@@ -233,24 +243,22 @@ app.put(
   zValidator("json", BlogPostUpdateSchema),
   async (c) => {
     const post_id = c.req.param("post_id");
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as UpdateBlogPostRequest;
     const db = c.env.DB;
 
-    const current = await db
+    const current = (await db
       .prepare("SELECT * FROM blog_posts WHERE id = ?")
       .bind(post_id)
-      .first();
+      .first()) as DBBlogPost | null;
     if (!current) return c.json({ detail: "Not found" }, 404);
 
-    const title = data.title !== undefined ? data.title : current.title;
-    const content = data.content !== undefined ? data.content : current.content;
-    const excerpt = data.excerpt !== undefined ? data.excerpt : current.excerpt;
-    const author = data.author !== undefined ? data.author : current.author;
-    const category =
-      data.category !== undefined ? data.category : current.category;
-    const image_url =
-      data.image_url !== undefined ? data.image_url : current.image_url;
-    const tags = data.tags !== undefined ? data.tags : current.tags;
+    const title = data.title ?? current.title;
+    const content = data.content ?? current.content;
+    const excerpt = data.excerpt ?? current.excerpt;
+    const author = data.author ?? current.author;
+    const category = data.category ?? current.category;
+    const image_url = data.image_url ?? current.image_url;
+    const tags = data.tags ?? current.tags;
     const published =
       data.published !== undefined
         ? data.published
@@ -316,7 +324,7 @@ app.post(
   verifyToken,
   zValidator("json", ResearchCreateSchema),
   async (c) => {
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as CreateResearchRequest;
     const db = c.env.DB;
 
     const id = makeId();
@@ -356,7 +364,7 @@ app.delete("/api/admin/research/:rid", verifyToken, async (c) => {
 
 // Contact
 app.post("/api/contact", zValidator("json", ContactCreateSchema), async (c) => {
-  const data = c.req.valid("json");
+  const data = c.req.valid("json") as CreateContactRequest;
   const db = c.env.DB;
 
   const id = makeId();
@@ -413,7 +421,7 @@ app.post(
   verifyToken,
   zValidator("json", TestimonialCreateSchema),
   async (c) => {
-    const data = c.req.valid("json");
+    const data = c.req.valid("json") as CreateTestimonialRequest;
     const db = c.env.DB;
 
     const id = makeId();

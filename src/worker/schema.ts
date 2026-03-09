@@ -6,7 +6,7 @@ export const AdminLoginSchema = z.object({
 
 export const AppointmentCreateSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string(),
   service: z.string(),
   preferred_date: z.string(),
@@ -61,3 +61,13 @@ export const TestimonialCreateSchema = z.object({
 export const StatusUpdateSchema = z.object({
   status: z.string(),
 });
+
+// Type inference from schemas
+export type AdminLoginInput = z.infer<typeof AdminLoginSchema>;
+export type AppointmentInput = z.infer<typeof AppointmentCreateSchema>;
+export type BlogPostInput = z.infer<typeof BlogPostCreateSchema>;
+export type BlogPostUpdateInput = z.infer<typeof BlogPostUpdateSchema>;
+export type ResearchInput = z.infer<typeof ResearchCreateSchema>;
+export type ContactInput = z.infer<typeof ContactCreateSchema>;
+export type TestimonialInput = z.infer<typeof TestimonialCreateSchema>;
+export type StatusUpdateInput = z.infer<typeof StatusUpdateSchema>;
