@@ -73,7 +73,7 @@ const BlogDetail = () => {
     <div className="bg-white min-h-screen" data-testid="blog-detail-page">
       {/* Hero */}
       {post.image_url && (
-        <div className="relative h-72 md:h-96 overflow-hidden mt-16">
+        <div className="relative h-72 md:h-96 overflow-hidden mt-20">
           <img
             src={post.image_url}
             alt={post.title}
