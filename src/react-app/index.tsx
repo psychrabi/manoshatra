@@ -1,19 +1,22 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { lazy } from "react";
 import "./App.css";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
-import About from "./pages/About";
-import Admin from "./pages/Admin";
-import Appointments from "./pages/Appointments";
-import Blog from "./pages/Blog";
-import BlogDetail from "./pages/BlogDetail";
-import Contact from "./pages/Contact";
-import Home from "./pages/Home";
-import Research from "./pages/Research";
-import Services from "./pages/Services";
-import Team from "./pages/Team";
 
-const App = () => {
+// Lazy loaded page components
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const Team = lazy(() => import("./pages/Team"));
+const Appointments = lazy(() => import("./pages/Appointments"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogDetail = lazy(() => import("./pages/BlogDetail"));
+const Research = lazy(() => import("./pages/Research"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Admin = lazy(() => import("./pages/Admin"));
+
+function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-brand-beige flex flex-col">
@@ -36,6 +39,6 @@ const App = () => {
       </div>
     </BrowserRouter>
   );
-};
+}
 
 export default App;
