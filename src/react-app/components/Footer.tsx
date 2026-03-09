@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <img
-                src={LOGO_URL}
+                src="/logo-48.png"
                 alt="ManoShastra Logo"
                 className="w-12 h-12 rounded-full object-cover"
               />

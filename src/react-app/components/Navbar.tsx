@@ -49,7 +49,7 @@ const Navbar = () => {
             data-testid="navbar-logo"
           >
             <img
-              src={LOGO_URL}
+              src="/logo-48.png"
               alt="ManoShastra Logo"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
             />
