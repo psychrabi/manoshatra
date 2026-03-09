@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Heart } from "lucide-react";
-import { LOGO_URL, CONTACT_INFO } from "../data/constants";
+import { CONTACT_INFO } from "../data/constants";
 
 const Footer = () => {
   return (
