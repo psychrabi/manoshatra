@@ -1,15 +1,23 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "manoshatra",
-	"main": "./src/worker/index.ts",
-	"compatibility_date": "2025-10-08",
-	"compatibility_flags": ["nodejs_compat"],
-	"observability": {
-		"enabled": true
-	},
-	"upload_source_maps": true,
-	"assets": {
-		"directory": "./dist/client",
-		"not_found_handling": "single-page-application"
-	}
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "manoshatra",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2025-10-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist/client",
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    {
+      "binding": "manoshastra_db",
+      "database_name": "manoshastra-db",
+      "database_id": "4e17a505-a942-47fb-9999-9dbf74c7a03d",
+      "remote": true
+    }
+  ]
 }
