@@ -14,10 +14,9 @@
   },
   "d1_databases": [
     {
-      "binding": "manoshastra_db",
+      "binding": "DB",
       "database_name": "manoshastra-db",
-      "database_id": "4e17a505-a942-47fb-9999-9dbf74c7a03d",
-      "remote": true
+      "database_id": "4e17a505-a942-47fb-9999-9dbf74c7a03d"
     }
   ]
 }

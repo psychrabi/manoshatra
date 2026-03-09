@@ -44,15 +44,20 @@ app.use("*", async (c, next) => {
 // Middleware for Seeding
 app.use("*", async (c, next) => {
   if (!seeded) {
-    await seedData(c.env.DB);
-    seeded = true;
+    try {
+      await seedData(c.env.DB);
+      seeded = true;
+    } catch (error) {
+      console.error("Seeding error:", error);
+      // Continue even if seeding fails - DB might already be seeded
+    }
   }
   await next();
 });
 
 // JWT Middleware wrapper
-// eslint-disable-line @typescript-eslint/no-explicit-any
 const verifyToken = async (c: any, next: any) => {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const secret = c.env.JWT_SECRET_KEY || "manoshastra-default-secret";
   const jwtMiddleware = jwt({
     secret: secret,
@@ -62,6 +67,18 @@ const verifyToken = async (c: any, next: any) => {
 };
 
 // ==================== ROUTES ====================
+
+// Global error handler
+app.onError((err, c) => {
+  console.error("API Error:", err);
+  return c.json(
+    {
+      error: "Internal Server Error",
+      message: err.message || "An unexpected error occurred",
+    },
+    500
+  );
+});
 
 app.get("/api/", (c) => {
   return c.json({ message: "ManoShastra API is running", status: "ok" });
