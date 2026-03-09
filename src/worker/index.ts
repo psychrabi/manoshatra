@@ -467,4 +467,9 @@ app.delete("/api/admin/testimonials/:tid", verifyToken, async (c) => {
   return c.json({ message: "Deleted" });
 });
 
+// React SPA Fallback
+app.get("*", async (c) => {
+  return await c.env.ASSETS.fetch(new Request(new URL("/", c.req.url), c.req.raw));
+});
+
 export default app;

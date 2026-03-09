@@ -81,7 +81,7 @@ function HeroSection() {
           <div className="relative hidden lg:block animate-slide-in-right">
             <div className="hero-image-container">
               <img
-                src="https://images.unsplash.com/photo-1758273240631-59d44c8f5b66?crop=entropy&cs=srgb&fm=jpg&q=85&w=700"
+                src="./hero-image.webp"
                 alt="Compassionate counseling session"
                 className="w-full rounded-3xl object-cover shadow-2xl"
                 style={{ height: "480px" }}

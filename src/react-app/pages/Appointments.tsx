@@ -21,7 +21,7 @@ const Appointments = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,9 +73,9 @@ const Appointments = () => {
             {/* Info Panel */}
             <div className="space-y-6">
               <div className="bg-brand-beige rounded-2xl p-6">
-                <h3 className="font-heading font-bold text-brand-text text-lg mb-4">
+                <h2 className="font-heading font-bold text-brand-text text-lg mb-4">
                   What to Expect
-                </h3>
+                </h2>
                 <ul className="space-y-3">
                   {[
                     "Submit your appointment request online",
@@ -96,9 +96,9 @@ const Appointments = () => {
                 </ul>
               </div>
               <div className="bg-brand-beige rounded-2xl p-6 space-y-4">
-                <h3 className="font-heading font-bold text-brand-text text-lg">
+                <h2 className="font-heading font-bold text-brand-text text-lg">
                   Contact Info
-                </h3>
+                </h2>
                 <a
                   href={`tel:${CONTACT_INFO.phone}`}
                   className="flex items-center gap-3 text-brand-muted hover:text-brand-green transition-colors duration-200"
@@ -161,10 +161,14 @@ const Appointments = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                      <label
+                        className="block text-sm font-semibold text-brand-text mb-1.5"
+                        htmlFor="name"
+                      >
                         Full Name *
                       </label>
                       <input
+                        id="name"
                         name="name"
                         value={form.name}
                         onChange={handleChange}
@@ -174,10 +178,14 @@ const Appointments = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                      <label
+                        className="block text-sm font-semibold text-brand-text mb-1.5"
+                        htmlFor="phone"
+                      >
                         Phone Number *
                       </label>
                       <input
+                        id="phone"
                         name="phone"
                         value={form.phone}
                         onChange={handleChange}
@@ -189,10 +197,14 @@ const Appointments = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                    <label
+                      className="block text-sm font-semibold text-brand-text mb-1.5"
+                      htmlFor="email"
+                    >
                       Email Address *
                     </label>
                     <input
+                      id="email"
                       name="email"
                       value={form.email}
                       onChange={handleChange}
@@ -205,10 +217,14 @@ const Appointments = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                      <label
+                        className="block text-sm font-semibold text-brand-text mb-1.5"
+                        htmlFor="service"
+                      >
                         Service Needed *
                       </label>
                       <select
+                        id="service"
                         name="service"
                         value={form.service}
                         onChange={handleChange}
@@ -224,10 +240,14 @@ const Appointments = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                      <label
+                        className="block text-sm font-semibold text-brand-text mb-1.5"
+                        htmlFor="preferred_date"
+                      >
                         Preferred Date *
                       </label>
                       <input
+                        id="preferred_date"
                         name="preferred_date"
                         value={form.preferred_date}
                         onChange={handleChange}
@@ -240,10 +260,14 @@ const Appointments = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-brand-text mb-1.5">
+                    <label
+                      className="block text-sm font-semibold text-brand-text mb-1.5"
+                      htmlFor="message"
+                    >
                       Additional Message (Optional)
                     </label>
                     <textarea
+                      id="message"
                       name="message"
                       value={form.message}
                       onChange={handleChange}

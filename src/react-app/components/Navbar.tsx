@@ -105,6 +105,8 @@ const Navbar = () => {
             onClick={() => setMenuOpen(!menuOpen)}
             className="lg:hidden p-2 rounded-lg text-brand-text hover:bg-brand-beige-dark transition-colors duration-200"
             data-testid="navbar-mobile-toggle"
+            aria-label="Toggle mobile menu"
+            type="button"
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>

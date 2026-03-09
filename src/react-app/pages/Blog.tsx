@@ -115,9 +115,9 @@ const Blog = () => {
                         {post.category}
                       </span>
                     </div>
-                    <h3 className="font-heading font-bold text-brand-text text-base mb-2 line-clamp-2 group-hover:text-brand-green transition-colors duration-200">
+                    <h2 className="font-heading font-bold text-brand-text text-base mb-2 line-clamp-2 group-hover:text-brand-green transition-colors duration-200">
                       {post.title}
-                    </h3>
+                    </h2>
                     <p className="text-brand-muted text-sm line-clamp-3 mb-4 flex-1">
                       {post.excerpt}
                     </p>

@@ -153,9 +153,9 @@ const Services = () => {
                         isEven ? "" : "lg:order-1"
                       }`}
                     >
-                      <h4 className="font-heading font-bold text-brand-text mb-4 text-sm uppercase tracking-wider">
+                      <h3 className="font-heading font-bold text-brand-text mb-4 text-sm uppercase tracking-wider">
                         What's Included
-                      </h4>
+                      </h3>
                       <ul className="space-y-3">
                         {detail.details.map((d, j) => (
                           <li key={j} className="flex items-start gap-3">

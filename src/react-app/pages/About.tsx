@@ -85,7 +85,7 @@ const About = () => {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1768262437064-d86ee512c968?crop=entropy&cs=srgb&fm=jpg&q=85&w=700"
+                src="./room.webp"
                 alt="Counseling session"
                 className="w-full rounded-3xl shadow-xl object-cover"
                 style={{ height: "450px" }}
@@ -162,9 +162,9 @@ const About = () => {
                   className="text-brand-green shrink-0 mt-0.5"
                 />
                 <div>
-                  <h4 className="font-heading font-bold text-brand-text mb-1">
+                  <h3 className="font-heading font-bold text-brand-text mb-1">
                     {v.title}
-                  </h4>
+                  </h3>
                   <p className="text-brand-muted text-sm leading-relaxed">
                     {v.desc}
                   </p>

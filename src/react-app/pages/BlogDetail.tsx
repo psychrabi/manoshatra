@@ -12,7 +12,7 @@ function formatContent(content: string) {
       if (line.startsWith("**") && line.endsWith("**")) {
         return `<h3 style="font-family:Merriweather,serif;font-size:1.25rem;font-weight:700;color:#2C3E50;margin:1.5rem 0 0.5rem">${line.slice(
           2,
-          -2
+          -2,
         )}</h3>`;
       }
       if (line.match(/^\d+\.\s/)) {
@@ -20,7 +20,7 @@ function formatContent(content: string) {
       }
       if (line.startsWith("- ")) {
         return `<p style="margin-bottom:0.5rem;padding-left:1rem">• ${line.slice(
-          2
+          2,
         )}</p>`;
       }
       if (line.trim() === "") return "<br/>";
@@ -140,9 +140,9 @@ const BlogDetail = () => {
 
         {/* Footer CTA */}
         <div className="mt-12 pt-8 border-t border-border bg-brand-beige rounded-2xl p-6">
-          <h3 className="font-heading font-bold text-brand-text text-lg mb-2">
+          <h2 className="font-heading font-bold text-brand-text text-lg mb-2">
             Need Professional Support?
-          </h3>
+          </h2>
           <p className="text-brand-muted text-sm mb-4">
             Our team of qualified mental health professionals is here to help.
             Book an appointment today.

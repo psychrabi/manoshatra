@@ -30,7 +30,7 @@ export interface ContactInfo {
   mapEmbed: string;
 }
 
-export const LOGO_URL = "./logo.png";
+export const LOGO_URL = "./logo-48.png";
 
 export const SERVICES: Service[] = [
   {

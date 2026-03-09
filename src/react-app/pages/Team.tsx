@@ -29,9 +29,9 @@ const Team = () => {
                 <div className={`team-avatar ${member.color} text-xl`}>
                   {member.initials}
                 </div>
-                <h3 className="font-heading font-bold text-brand-text text-lg mb-1">
+                <h2 className="font-heading font-bold text-brand-text text-lg mb-1">
                   {member.name}
-                </h3>
+                </h2>
                 <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-4">
                   {member.designation}
                 </span>

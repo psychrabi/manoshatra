@@ -60,9 +60,9 @@ const Research = () => {
                   <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Icon size={22} className="text-brand-green" />
                   </div>
-                  <h3 className="font-heading font-bold text-brand-text text-base mb-2">
+                  <h2 className="font-heading font-bold text-brand-text text-base mb-2">
                     {item.title}
-                  </h3>
+                  </h2>
                   <p className="text-brand-muted text-sm leading-relaxed">
                     {item.desc}
                   </p>
@@ -132,6 +132,7 @@ const Research = () => {
                           rel="noopener noreferrer"
                           className="shrink-0 text-brand-blue hover:text-blue-700 transition-colors duration-200"
                           data-testid={`pub-link-${i}`}
+                          title={`Read more about ${pub.title}`}
                         >
                           <ExternalLink size={18} />
                         </a>
