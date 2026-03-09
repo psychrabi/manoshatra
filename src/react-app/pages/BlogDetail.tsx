@@ -2,22 +2,26 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
+import type { BlogPost } from "../types";
 
-const API = `/api`;
-
-function formatContent(content) {
+function formatContent(content: string) {
   if (!content) return "";
   return content
     .split("\n")
-    .map((line, i) => {
+    .map((line: string) => {
       if (line.startsWith("**") && line.endsWith("**")) {
-        return `<h3 style="font-family:Merriweather,serif;font-size:1.25rem;font-weight:700;color:#2C3E50;margin:1.5rem 0 0.5rem">${line.slice(2, -2)}</h3>`;
+        return `<h3 style="font-family:Merriweather,serif;font-size:1.25rem;font-weight:700;color:#2C3E50;margin:1.5rem 0 0.5rem">${line.slice(
+          2,
+          -2
+        )}</h3>`;
       }
       if (line.match(/^\d+\.\s/)) {
         return `<p style="margin-bottom:0.5rem;padding-left:1rem">${line}</p>`;
       }
       if (line.startsWith("- ")) {
-        return `<p style="margin-bottom:0.5rem;padding-left:1rem">• ${line.slice(2)}</p>`;
+        return `<p style="margin-bottom:0.5rem;padding-left:1rem">• ${line.slice(
+          2
+        )}</p>`;
       }
       if (line.trim() === "") return "<br/>";
       return `<p style="margin-bottom:1rem;line-height:1.8">${line}</p>`;
@@ -25,16 +29,15 @@ function formatContent(content) {
     .join("");
 }
 
-export default function BlogDetail() {
+const BlogDetail = () => {
   const { id } = useParams();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     axios
-      .get(`${API}/blog/${id}`)
+      .get(`/api/blog/${id}`)
       .then((r) => setPost(r.data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
@@ -164,4 +167,5 @@ export default function BlogDetail() {
       </div>
     </div>
   );
-}
+};
+export default BlogDetail;

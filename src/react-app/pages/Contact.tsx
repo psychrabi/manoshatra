@@ -1,28 +1,21 @@
-import { useState } from "react";
 import axios from "axios";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  Facebook,
-  CheckCircle,
-} from "lucide-react";
+import { CheckCircle, Clock, Mail, MapPin, Phone } from "lucide-react";
+import { useState } from "react";
 import { CONTACT_INFO } from "../data/constants";
 
-const API = `/api`;
 const initialForm = { name: "", email: "", phone: "", message: "" };
 
-export default function Contact() {
+const Contact = () => {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
       setError("Please fill in all required fields.");
@@ -31,7 +24,7 @@ export default function Contact() {
     setLoading(true);
     setError("");
     try {
-      await axios.post(`${API}/contact`, form);
+      await axios.post(`/api/contact`, form);
       setSuccess(true);
       setForm(initialForm);
     } catch {
@@ -336,7 +329,7 @@ export default function Contact() {
               width="100%"
               height="380"
               style={{ border: 0 }}
-              allowFullScreen=""
+              allowFullScreen={true as boolean}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title="ManoShastra Location - Kupondole, Lalitpur"
@@ -346,4 +339,5 @@ export default function Contact() {
       </section>
     </div>
   );
-}
+};
+export default Contact;

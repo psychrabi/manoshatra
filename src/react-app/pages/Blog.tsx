@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
-import { Calendar, User, Tag, ChevronRight } from "lucide-react";
+import { Calendar, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import type { BlogPost } from "../types";
 
-const API = `/api`;
-
-export default function Blog() {
-  const [posts, setPosts] = useState([]);
+const Blog = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -14,9 +13,9 @@ export default function Blog() {
   const LIMIT = 9;
 
   useEffect(() => {
-    setLoading(true);
-    axios.get(`${API}/blog?page=${page}&limit=${LIMIT}`)
-      .then(r => {
+    axios
+      .get(`/api/blog?page=${page}&limit=${LIMIT}`)
+      .then((r) => {
         setPosts(r.data.posts || []);
         setTotal(r.data.total || 0);
       })
@@ -24,8 +23,9 @@ export default function Blog() {
       .finally(() => setLoading(false));
   }, [page]);
 
-  const categories = ["All", ...new Set(posts.map(p => p.category))];
-  const filtered = category === "All" ? posts : posts.filter(p => p.category === category);
+  const categories = ["All", ...new Set(posts.map((p) => p.category))];
+  const filtered =
+    category === "All" ? posts : posts.filter((p) => p.category === category);
 
   return (
     <div data-testid="blog-page">
@@ -36,7 +36,8 @@ export default function Blog() {
             Our Blog
           </h1>
           <p className="text-brand-muted text-lg max-w-2xl mx-auto">
-            Evidence-based articles and insights on mental health, wellbeing, and psychological wellness from our expert team.
+            Evidence-based articles and insights on mental health, wellbeing,
+            and psychological wellness from our expert team.
           </p>
         </div>
       </section>
@@ -44,8 +45,11 @@ export default function Blog() {
       <section className="py-16 md:py-24 bg-white" data-testid="blog-list">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mb-10" data-testid="blog-categories">
-            {categories.map(cat => (
+          <div
+            className="flex flex-wrap gap-2 mb-10"
+            data-testid="blog-categories"
+          >
+            {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
@@ -64,7 +68,10 @@ export default function Blog() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-brand-beige rounded-2xl overflow-hidden animate-pulse">
+                <div
+                  key={i}
+                  className="bg-brand-beige rounded-2xl overflow-hidden animate-pulse"
+                >
                   <div className="h-48 bg-gray-200" />
                   <div className="p-5 space-y-3">
                     <div className="h-3 bg-gray-200 rounded w-1/4" />
@@ -75,8 +82,13 @@ export default function Blog() {
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-20 text-brand-muted" data-testid="blog-empty">
-              <p className="text-xl font-heading font-bold">No articles found</p>
+            <div
+              className="text-center py-20 text-brand-muted"
+              data-testid="blog-empty"
+            >
+              <p className="text-xl font-heading font-bold">
+                No articles found
+              </p>
               <p className="mt-2">Check back soon for new content.</p>
             </div>
           ) : (
@@ -99,15 +111,28 @@ export default function Blog() {
                   )}
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs font-bold text-brand-green bg-green-50 px-2 py-1 rounded-full">{post.category}</span>
+                      <span className="text-xs font-bold text-brand-green bg-green-50 px-2 py-1 rounded-full">
+                        {post.category}
+                      </span>
                     </div>
                     <h3 className="font-heading font-bold text-brand-text text-base mb-2 line-clamp-2 group-hover:text-brand-green transition-colors duration-200">
                       {post.title}
                     </h3>
-                    <p className="text-brand-muted text-sm line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                    <p className="text-brand-muted text-sm line-clamp-3 mb-4 flex-1">
+                      {post.excerpt}
+                    </p>
                     <div className="flex items-center gap-4 text-xs text-brand-muted pt-3 border-t border-border">
-                      <span className="flex items-center gap-1"><User size={12} /> {post.author}</span>
-                      <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      <span className="flex items-center gap-1">
+                        <User size={12} /> {post.author}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />{" "}
+                        {new Date(post.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -117,18 +142,23 @@ export default function Blog() {
 
           {/* Pagination */}
           {total > LIMIT && (
-            <div className="flex justify-center gap-3 mt-12" data-testid="blog-pagination">
+            <div
+              className="flex justify-center gap-3 mt-12"
+              data-testid="blog-pagination"
+            >
               <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="px-5 py-2 rounded-full bg-brand-beige text-brand-muted font-semibold text-sm disabled:opacity-40 hover:bg-brand-beige-dark transition-colors duration-200"
                 data-testid="prev-page"
               >
                 Previous
               </button>
-              <span className="px-5 py-2 text-sm text-brand-muted">Page {page} of {Math.ceil(total / LIMIT)}</span>
+              <span className="px-5 py-2 text-sm text-brand-muted">
+                Page {page} of {Math.ceil(total / LIMIT)}
+              </span>
               <button
-                onClick={() => setPage(p => p + 1)}
+                onClick={() => setPage((p) => p + 1)}
                 disabled={page >= Math.ceil(total / LIMIT)}
                 className="px-5 py-2 rounded-full bg-brand-green text-white font-semibold text-sm disabled:opacity-40 hover:bg-brand-green-dark transition-colors duration-200"
                 data-testid="next-page"
@@ -141,4 +171,5 @@ export default function Blog() {
       </section>
     </div>
   );
-}
+};
+export default Blog;

@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BookOpen, ExternalLink, Calendar, Users } from "lucide-react";
 
-const API = `/api`;
-
-export default function Research() {
+const Research = () => {
   const [publications, setPublications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API}/research`)
-      .then(r => setPublications(r.data))
+    axios
+      .get(`/api/research`)
+      .then((r) => setPublications(r.data))
       .catch(() => setPublications([]))
       .finally(() => setLoading(false));
   }, []);
@@ -24,7 +23,8 @@ export default function Research() {
             Research & Publications
           </h1>
           <p className="text-brand-muted text-lg max-w-2xl mx-auto">
-            Our team is dedicated to advancing the field of mental health through rigorous research and evidence-based practice in Nepal.
+            Our team is dedicated to advancing the field of mental health
+            through rigorous research and evidence-based practice in Nepal.
           </p>
         </div>
       </section>
@@ -34,18 +34,38 @@ export default function Research() {
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {[
-              { icon: BookOpen, title: "Evidence-Based Practice", desc: "All our clinical work is grounded in the latest research and proven therapeutic methods." },
-              { icon: Users, title: "Community Research", desc: "We conduct research on mental health challenges specific to the Nepali population." },
-              { icon: Calendar, title: "Ongoing Studies", desc: "We are continuously engaged in new research projects to improve care quality." },
+              {
+                icon: BookOpen,
+                title: "Evidence-Based Practice",
+                desc: "All our clinical work is grounded in the latest research and proven therapeutic methods.",
+              },
+              {
+                icon: Users,
+                title: "Community Research",
+                desc: "We conduct research on mental health challenges specific to the Nepali population.",
+              },
+              {
+                icon: Calendar,
+                title: "Ongoing Studies",
+                desc: "We are continuously engaged in new research projects to improve care quality.",
+              },
             ].map((item, i) => {
               const Icon = item.icon;
               return (
-                <div key={i} className="bg-brand-beige rounded-2xl p-6 text-center" data-testid={`research-feature-${i}`}>
+                <div
+                  key={i}
+                  className="bg-brand-beige rounded-2xl p-6 text-center"
+                  data-testid={`research-feature-${i}`}
+                >
                   <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Icon size={22} className="text-brand-green" />
                   </div>
-                  <h3 className="font-heading font-bold text-brand-text text-base mb-2">{item.title}</h3>
-                  <p className="text-brand-muted text-sm leading-relaxed">{item.desc}</p>
+                  <h3 className="font-heading font-bold text-brand-text text-base mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-brand-muted text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
               );
             })}
@@ -53,11 +73,16 @@ export default function Research() {
 
           {/* Publications */}
           <div>
-            <h2 className="font-heading text-2xl md:text-3xl font-bold text-brand-text mb-8">Publications</h2>
+            <h2 className="font-heading text-2xl md:text-3xl font-bold text-brand-text mb-8">
+              Publications
+            </h2>
             {loading ? (
               <div className="space-y-4">
-                {[1, 2].map(i => (
-                  <div key={i} className="bg-brand-beige rounded-2xl p-6 animate-pulse">
+                {[1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-brand-beige rounded-2xl p-6 animate-pulse"
+                  >
                     <div className="h-4 bg-gray-200 rounded w-3/4 mb-3" />
                     <div className="h-3 bg-gray-200 rounded w-1/2 mb-3" />
                     <div className="h-3 bg-gray-200 rounded" />
@@ -68,22 +93,36 @@ export default function Research() {
             ) : (
               <div className="space-y-6" data-testid="publications-list">
                 {publications.map((pub, i) => (
-                  <div key={pub.id} className="bg-brand-beige rounded-2xl p-6 md:p-8 card-hover" data-testid={`publication-${i}`}>
+                  <div
+                    key={pub.id}
+                    className="bg-brand-beige rounded-2xl p-6 md:p-8 card-hover"
+                    data-testid={`publication-${i}`}
+                  >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-xs font-bold bg-brand-green text-white px-3 py-1 rounded-full">{pub.year}</span>
+                          <span className="text-xs font-bold bg-brand-green text-white px-3 py-1 rounded-full">
+                            {pub.year}
+                          </span>
                           {pub.journal && (
-                            <span className="text-xs text-brand-blue font-semibold">{pub.journal}</span>
+                            <span className="text-xs text-brand-blue font-semibold">
+                              {pub.journal}
+                            </span>
                           )}
                         </div>
-                        <h3 className="font-heading font-bold text-brand-text text-lg mb-2">{pub.title}</h3>
+                        <h3 className="font-heading font-bold text-brand-text text-lg mb-2">
+                          {pub.title}
+                        </h3>
                         <p className="text-brand-green text-sm font-semibold mb-3 flex items-center gap-2">
                           <Users size={14} /> {pub.authors}
                         </p>
-                        <p className="text-brand-muted text-sm leading-relaxed">{pub.abstract}</p>
+                        <p className="text-brand-muted text-sm leading-relaxed">
+                          {pub.abstract}
+                        </p>
                         {pub.doi && (
-                          <p className="text-xs text-brand-muted mt-3 font-mono">DOI: {pub.doi}</p>
+                          <p className="text-xs text-brand-muted mt-3 font-mono">
+                            DOI: {pub.doi}
+                          </p>
                         )}
                       </div>
                       {pub.doi && (
@@ -107,11 +146,18 @@ export default function Research() {
       </section>
 
       {/* Collaborate */}
-      <section className="py-16 bg-brand-beige" data-testid="research-collaborate">
+      <section
+        className="py-16 bg-brand-beige"
+        data-testid="research-collaborate"
+      >
         <div className="container mx-auto px-4 md:px-6 max-w-4xl text-center">
-          <h2 className="font-heading text-3xl font-bold text-brand-text mb-4">Interested in Collaborating?</h2>
+          <h2 className="font-heading text-3xl font-bold text-brand-text mb-4">
+            Interested in Collaborating?
+          </h2>
           <p className="text-brand-muted text-lg mb-8 max-w-2xl mx-auto">
-            We welcome collaborations with researchers, academic institutions, and mental health organizations. Reach out to discuss partnership opportunities.
+            We welcome collaborations with researchers, academic institutions,
+            and mental health organizations. Reach out to discuss partnership
+            opportunities.
           </p>
           <a
             href="mailto:manoshastracounseling@gmail.com"
@@ -124,4 +170,5 @@ export default function Research() {
       </section>
     </div>
   );
-}
+};
+export default Research;

@@ -30,8 +30,7 @@ export interface ContactInfo {
   mapEmbed: string;
 }
 
-export const LOGO_URL =
-  "https://customer-assets.emergentagent.com/job_mindcare-portal-12/artifacts/8zt3nrak_image.png";
+export const LOGO_URL = "./logo.png";
 
 export const SERVICES: Service[] = [
   {
