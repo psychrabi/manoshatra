@@ -135,7 +135,7 @@ export const TEAM: TeamMember[] = [
     id: 6,
     name: "Sharda Nepal",
     designation: "Counseling Psychologist",
-    bio: "Sharda focuses on group therapy and crisis intervention, creating safe therapeutic spaces where clients can heal, grow, and connect with others.",
+    bio: "Sharda focuses on adolescent mental health prevention and early intervention, supporting youth and adults with depression, anxiety, ADHD, and relationship challenges while building coping skills and emotional awareness.",
     initials: "SN",
     color: "bg-indigo-500",
   },
