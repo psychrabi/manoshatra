@@ -118,7 +118,7 @@ export const TEAM: TeamMember[] = [
   {
     id: 4,
     name: "Sarita Shrestha",
-    designation: "Psychologist",
+    designation: "Counseling Psychologist",
     bio: "Sarita is passionate about family therapy and relationship counseling, helping families build healthier communication patterns and stronger bonds.",
     initials: "SR",
     color: "bg-sky-500",
@@ -126,7 +126,7 @@ export const TEAM: TeamMember[] = [
   {
     id: 5,
     name: "Pammi Thakur",
-    designation: "Psychologist",
+    designation: "Counseling Psychologist",
     bio: "Pammi specializes in child and adolescent mental health, providing age-appropriate therapeutic interventions to support young people through developmental challenges.",
     initials: "PT",
     color: "bg-teal-500",
@@ -134,7 +134,7 @@ export const TEAM: TeamMember[] = [
   {
     id: 6,
     name: "Sharda Nepal",
-    designation: "Psychologist",
+    designation: "Counseling Psychologist",
     bio: "Sharda focuses on group therapy and crisis intervention, creating safe therapeutic spaces where clients can heal, grow, and connect with others.",
     initials: "SN",
     color: "bg-indigo-500",
