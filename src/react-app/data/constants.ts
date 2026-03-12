@@ -10,6 +10,7 @@ export interface TeamMember {
   id: number;
   name: string;
   designation: string;
+  license: string;
   bio: string;
   initials: string;
   color: string;
@@ -95,14 +96,16 @@ export const TEAM: TeamMember[] = [
     id: 1,
     name: "Dr. Suman Prasad Adhikari",
     designation: "Neuro Psychiatrist",
+    license: "NMC: 9120",
     bio: "With extensive experience in neuropsychiatry, Dr. Adhikari specializes in diagnosing and treating complex psychiatric conditions with a compassionate, patient-centered approach.",
     initials: "SA",
     color: "bg-brand-green",
   },
   {
     id: 2,
-    name: "Trishna Gosh Chhetri",
-    designation: "Clinical Psychologist",
+    name: "Trishna Ghosh Chhetri",
+    designation: "Consultant Clinical Psychologist",
+    license: "NHPC: 01",
     bio: "Trishna brings expertise in cognitive behavioral therapy and evidence-based treatments, helping clients overcome anxiety, depression, and trauma with skill and empathy.",
     initials: "TG",
     color: "bg-brand-blue",
@@ -111,6 +114,7 @@ export const TEAM: TeamMember[] = [
     id: 3,
     name: "Sajjan Shrestha",
     designation: "Psychologist",
+    license: "",
     bio: "Sajjan specializes in individual counseling and psychological assessment, with a focus on helping clients understand themselves and achieve their full potential.",
     initials: "SS",
     color: "bg-emerald-500",
@@ -119,15 +123,17 @@ export const TEAM: TeamMember[] = [
     id: 4,
     name: "Sarita Shrestha",
     designation: "Counseling Psychologist",
-    bio: "Sarita is passionate about family therapy and relationship counseling, helping families build healthier communication patterns and stronger bonds.",
-    initials: "SR",
+    license: "",
+    bio: "Sarita specializes in child and adolescent mental health, providing age-appropriate therapeutic interventions to support young people through developmental challenges.",
+    initials: "SS",
     color: "bg-sky-500",
   },
   {
     id: 5,
     name: "Pammi Thakur",
     designation: "Counseling Psychologist",
-    bio: "Pammi specializes in child and adolescent mental health, providing age-appropriate therapeutic interventions to support young people through developmental challenges.",
+    license: "",
+    bio: "Pammi is passionate about family therapy and relationship counseling, helping families build healthier communication patterns and stronger bonds.",
     initials: "PT",
     color: "bg-teal-500",
   },
@@ -135,7 +141,8 @@ export const TEAM: TeamMember[] = [
     id: 6,
     name: "Sharda Nepal",
     designation: "Counseling Psychologist",
-    bio: "Sharda focuses on adolescent mental health prevention and early intervention, supporting youth and adults with depression, anxiety, ADHD, and relationship challenges while building coping skills and emotional awareness.",
+    license: "",
+    bio: "Sharda works with adolescents and adults experiencing difficulties such as anxiety, depression, ADHD, relationship issues, and other emotional or life challenges. Her approach focuses on emotional awareness, resilience, and practical coping.",
     initials: "SN",
     color: "bg-indigo-500",
   },

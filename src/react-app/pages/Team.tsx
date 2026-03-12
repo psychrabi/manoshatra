@@ -32,9 +32,15 @@ const Team = () => {
                 <h2 className="font-heading font-bold text-brand-text text-lg mb-1">
                   {member.name}
                 </h2>
-                <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-4">
+             
+                <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-2">
                   {member.designation}
+                </span> <br />
+                
+                <span className={`inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-4 ${member.license ? '' : 'invisible'}`}>
+                  {member.license}
                 </span>
+               
                 <p className="text-brand-muted text-sm leading-relaxed">
                   {member.bio}
                 </p>
