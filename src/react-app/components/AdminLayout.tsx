@@ -6,7 +6,7 @@ import {
   X
 } from "lucide-react";
 import { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 
 const navigation = [
@@ -90,8 +90,8 @@ export default function AdminLayout() {
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${isActive
-                      ? "bg-brand-green text-white"
-                      : "text-brand-muted hover:bg-brand-beige hover:text-brand-text"
+                    ? "bg-brand-green text-white"
+                    : "text-brand-muted hover:bg-brand-beige hover:text-brand-text"
                     }`}
                 >
                   <Icon size={18} />
@@ -119,6 +119,9 @@ export default function AdminLayout() {
         <AdminNavbar onMenuClick={() => setSidebarOpen(true)} />
 
         {/* Page content is rendered by parent route via Outlet */}
+        <main className="p-4 sm:p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
