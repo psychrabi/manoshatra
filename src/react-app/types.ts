@@ -2,7 +2,7 @@
 
 // Blog Types
 export interface BlogPost {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   content?: string;
@@ -16,7 +16,7 @@ export interface BlogPost {
 
 // Appointment Types
 export interface Appointment {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -64,7 +64,7 @@ export interface Testimonial {
 
 // Research/Publication Types
 export interface Publication {
-  id: number;
+  id: string;
   title: string;
   authors: string;
   abstract?: string;
@@ -75,9 +75,10 @@ export interface Publication {
 
 // Contact Message Types
 export interface ContactMessage {
-  id: number;
+  id: string;
   name: string;
   email: string;
+  phone?: string;
   subject?: string;
   message: string;
   read: boolean;

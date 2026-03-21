@@ -1,28 +1,28 @@
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { jwt, sign } from "hono/jwt";
-import { zValidator } from "@hono/zod-validator";
+import type {
+  CreateAppointmentRequest,
+  CreateBlogPostRequest,
+  CreateContactRequest,
+  CreateResearchRequest,
+  CreateTestimonialRequest,
+  DBBlogPost,
+  UpdateBlogPostRequest,
+  UpdateStatusRequest,
+} from "../shared/types";
 import { Env, cleanDoc, makeId, nowUtc } from "./db";
 import {
   AdminLoginSchema,
   AppointmentCreateSchema,
   BlogPostCreateSchema,
   BlogPostUpdateSchema,
-  ResearchCreateSchema,
   ContactCreateSchema,
-  TestimonialCreateSchema,
+  ResearchCreateSchema,
   StatusUpdateSchema,
+  TestimonialCreateSchema,
 } from "./schema";
-import type {
-  CreateAppointmentRequest,
-  UpdateStatusRequest,
-  CreateBlogPostRequest,
-  UpdateBlogPostRequest,
-  CreateResearchRequest,
-  CreateContactRequest,
-  CreateTestimonialRequest,
-  DBBlogPost,
-} from "../shared/types";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -151,6 +151,38 @@ app.patch(
       .bind(c.req.param("id"))
       .first();
     return c.json(cleanDoc(result));
+  }
+);
+
+app.patch(
+  "/api/admin/appointments/:id/reschedule",
+  verifyToken,
+  async (c) => {
+    const db = c.env.DB;
+    const { preferred_date } = await c.req.json();
+
+    await db
+      .prepare("UPDATE appointments SET preferred_date = ? WHERE id = ?")
+      .bind(preferred_date, c.req.param("id"))
+      .run();
+    const result = await db
+      .prepare("SELECT * FROM appointments WHERE id = ?")
+      .bind(c.req.param("id"))
+      .first();
+    return c.json(cleanDoc(result));
+  }
+);
+
+app.delete(
+  "/api/admin/appointments/:id",
+  verifyToken,
+  async (c) => {
+    const db = c.env.DB;
+    await db
+      .prepare("DELETE FROM appointments WHERE id = ?")
+      .bind(c.req.param("id"))
+      .run();
+    return c.json({ message: "Deleted" });
   }
 );
 
