@@ -3,7 +3,6 @@ import { cors } from "hono/cors";
 import { jwt, sign } from "hono/jwt";
 import { zValidator } from "@hono/zod-validator";
 import { Env, cleanDoc, makeId, nowUtc } from "./db";
-import { seedData } from "./seed";
 import {
   AdminLoginSchema,
   AppointmentCreateSchema,
@@ -27,8 +26,6 @@ import type {
 
 const app = new Hono<{ Bindings: Env }>();
 
-let seeded = false;
-
 // Middleware for CORS
 app.use("*", async (c, next) => {
   const origins = c.env.CORS_ORIGINS ? c.env.CORS_ORIGINS.split(",") : ["*"];
@@ -39,20 +36,6 @@ app.use("*", async (c, next) => {
     credentials: true,
   });
   return corsMiddleware(c, next);
-});
-
-// Middleware for Seeding
-app.use("*", async (c, next) => {
-  if (!seeded) {
-    try {
-      await seedData(c.env.DB);
-      seeded = true;
-    } catch (error) {
-      console.error("Seeding error:", error);
-      // Continue even if seeding fails - DB might already be seeded
-    }
-  }
-  await next();
 });
 
 // JWT Middleware wrapper
