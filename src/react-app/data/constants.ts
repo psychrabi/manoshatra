@@ -10,6 +10,7 @@ export interface TeamMember {
   id: number;
   name: string;
   designation: string;
+  level?: string;
   license: string;
   bio: string;
   initials: string;
@@ -95,8 +96,9 @@ export const TEAM: TeamMember[] = [
   {
     id: 1,
     name: "Dr. Suman Prasad Adhikari",
-    designation: "Neuro Psychiatrist",
-    license: "NMC: 9120",
+    designation: "Consultant Neuropsychiatrist",
+    level: "Associate Professor - NAIHS",
+    license: "NMC No. 9120",
     bio: "With extensive experience in neuropsychiatry, Dr. Adhikari specializes in diagnosing and treating complex psychiatric conditions with a compassionate, patient-centered approach.",
     initials: "SA",
     color: "bg-brand-green",
@@ -105,7 +107,8 @@ export const TEAM: TeamMember[] = [
     id: 2,
     name: "Trishna Ghosh Chhetri",
     designation: "Consultant Clinical Psychologist",
-    license: "NHPC: 01",
+    level: "Associate Professor - NAMS",
+    license: "NHPC No. 1",
     bio: "Trishna brings expertise in cognitive behavioral therapy and evidence-based treatments, helping clients overcome anxiety, depression, and trauma with skill and empathy.",
     initials: "TG",
     color: "bg-brand-blue",

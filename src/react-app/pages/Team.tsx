@@ -36,6 +36,11 @@ const Team = () => {
                 <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-2">
                   {member.designation}
                 </span> <br />
+                {member.level && (
+                  <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-2">
+                    {member.level}
+                  </span>
+                )} <br />
                 
                 <span className={`inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-4 ${member.license ? '' : 'invisible'}`}>
                   {member.license}
