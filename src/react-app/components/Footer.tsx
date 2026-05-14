@@ -194,8 +194,11 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href={`tel:${CONTACT_INFO.phone}`}
+                  href={`https://wa.me/${CONTACT_INFO.phone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center gap-3 text-gray-300 hover:text-brand-green-light text-sm transition-colors duration-200"
+                  title="Book an appointment"
                   data-testid="footer-phone"
                 >
                   <Phone

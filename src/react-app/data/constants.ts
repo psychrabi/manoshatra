@@ -32,7 +32,6 @@ export interface ContactInfo {
   mapEmbed: string;
 }
 
-
 export const SERVICES: Service[] = [
   {
     id: 1,
@@ -163,7 +162,7 @@ export const CONTACT_INFO: ContactInfo = {
   phone: "9708072525",
   email: "manoshastracounseling@gmail.com",
   facebook: "https://www.facebook.com/manoshastracounseling",
-  hours: "Sun - Fri: 9:00 AM - 6:00 PM",
+  hours: "Sun - Fri: 11:00 AM - 5:30 PM",
   mapEmbed:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3533.1907870516696!2d85.31446657534413!3d27.685056327120267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19be62c47cc7%3A0xdecb8b8e52f28b6c!2sKupondole%2C+Lalitpur+44700!5e0!3m2!1sen!2snp!4v1700000000000!5m2!1sen!2snp",
 };

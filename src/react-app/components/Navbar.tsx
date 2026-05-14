@@ -84,8 +84,11 @@ const Navbar = () => {
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3">
             <a
-              href="tel:9708072525"
+              href="https://wa.me/9708072525"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 text-brand-muted text-sm hover:text-brand-green transition-colors duration-200"
+              title="Book an appointment"
             >
               <Phone size={14} />
               <span>9708072525</span>
