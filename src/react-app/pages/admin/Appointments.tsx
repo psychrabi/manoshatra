@@ -44,7 +44,7 @@ export default function Appointments() {
       .finally(() => setLoading(false));
   }, [headers]);
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (id: string, status: Appointment["status"]) => {
     await axios.patch(
       `/api/admin/appointments/${id}/status`,
       { status },
