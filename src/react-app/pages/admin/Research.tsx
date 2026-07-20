@@ -1,15 +1,13 @@
-import axios from "axios";
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import { useAdminResearch, useCreateResearch, useDeleteResearch } from "../../hooks/useQueries";
 import type { Publication } from "../../types";
 
 export default function Research() {
-  const token = useMemo(() => localStorage.getItem("admin_token"), []);
-  const headers = useMemo(
-    () => (token ? { Authorization: `Bearer ${token}` } : {}),
-    [token]
-  );
-  const [pubs, setPubs] = useState<Publication[]>([]);
+  const { data: pubs = [] } = useAdminResearch();
+  const createMutation = useCreateResearch();
+  const deleteMutation = useDeleteResearch();
+
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     title: "",
@@ -20,39 +18,29 @@ export default function Research() {
     doi: "",
   });
 
-  const loadPubs = () =>
-    axios
-      .get(`/api/admin/research`, { headers })
-      .then((r) => setPubs(r.data))
-      .catch(() => { });
-
-  useEffect(() => {
-    loadPubs();
-  }, [headers]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    await axios.post(
-      `/api/admin/research`,
-      { ...form, year: parseInt(form.year) },
-      { headers }
+    createMutation.mutate(
+      { ...form, year: parseInt(form.year) } as Omit<Publication, "id">,
+      {
+        onSuccess: () => {
+          setShowForm(false);
+          setForm({
+            title: "",
+            authors: "",
+            abstract: "",
+            journal: "",
+            year: new Date().getFullYear().toString(),
+            doi: "",
+          });
+        },
+      },
     );
-    loadPubs();
-    setShowForm(false);
-    setForm({
-      title: "",
-      authors: "",
-      abstract: "",
-      journal: "",
-      year: new Date().getFullYear().toString(),
-      doi: "",
-    });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Delete this publication?")) return;
-    await axios.delete(`/api/admin/research/${id}`, { headers });
-    loadPubs();
+    deleteMutation.mutate(id);
   };
 
   return (
@@ -121,9 +109,10 @@ export default function Research() {
           <div className="flex gap-3">
             <button
               type="submit"
+              disabled={createMutation.isPending}
               className="btn-primary text-sm py-2 px-5"
             >
-              Add Publication
+              {createMutation.isPending ? "Adding..." : "Add Publication"}
             </button>
             <button
               type="button"
@@ -137,7 +126,7 @@ export default function Research() {
       )}
 
       <div className="space-y-3">
-        {pubs.map((pub, i) => (
+        {pubs.map((pub) => (
           <div
             key={pub.id}
             className="bg-white rounded-2xl p-4 border border-border flex items-start justify-between gap-4"
@@ -152,7 +141,8 @@ export default function Research() {
             </div>
             <button
               onClick={() => handleDelete(pub.id)}
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+              disabled={deleteMutation.isPending}
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0 disabled:opacity-50"
             >
               <Trash2 size={15} />
             </button>

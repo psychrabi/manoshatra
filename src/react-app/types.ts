@@ -140,12 +140,6 @@ export type IconName =
   | "calendar"
   | "award";
 
-export type LucideIconType = React.ElementType;
-
-export interface IconMap {
-  [key: string]: LucideIconType;
-}
-
 // API Response Types
 export interface PaginatedResponse<T> {
   posts: T[];

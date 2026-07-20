@@ -1,31 +1,14 @@
-import axios from "axios";
 import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import type { ContactMessage } from "../../types";
+import { useState } from "react";
+import { useAdminContact, useMarkMessageRead } from "../../hooks/useQueries";
 
 export default function Messages() {
-  const token = useMemo(() => localStorage.getItem("admin_token"), []);
-  const headers = useMemo(
-    () => (token ? { Authorization: `Bearer ${token}` } : {}),
-    [token]
-  );
-  const [messages, setMessages] = useState<ContactMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: messages = [], isLoading } = useAdminContact();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const markReadMutation = useMarkMessageRead();
 
-  useEffect(() => {
-    axios
-      .get(`/api/admin/contact`, { headers })
-      .then((r) => setMessages(r.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [headers]);
-
-  const markRead = async (id: string) => {
-    await axios.patch(`/api/admin/contact/${id}/read`, {}, { headers });
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, read: true } : m))
-    );
+  const markRead = (id: string) => {
+    markReadMutation.mutate(id);
   };
 
   const formatRelativeTime = (dateStr: string) => {
@@ -46,7 +29,7 @@ export default function Messages() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <h1 className="font-heading text-2xl font-bold text-brand-text mb-6">
@@ -203,9 +186,10 @@ export default function Messages() {
                   {!m.read && (
                     <button
                       onClick={() => markRead(m.id)}
-                      className="shrink-0 text-xs bg-white text-brand-green px-4 py-2 rounded-xl font-semibold border border-brand-green/30 hover:bg-brand-green hover:text-white transition-colors"
+                      disabled={markReadMutation.isPending}
+                      className="shrink-0 text-xs bg-white text-brand-green px-4 py-2 rounded-xl font-semibold border border-brand-green/30 hover:bg-brand-green hover:text-white transition-colors disabled:opacity-50"
                     >
-                      Mark Read
+                      {markReadMutation.isPending ? "..." : "Mark Read"}
                     </button>
                   )}
                 </div>

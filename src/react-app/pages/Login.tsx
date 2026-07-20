@@ -1,37 +1,35 @@
-import axios from "axios";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAdminLogin } from "../hooks/useQueries";
+import { useAuthStore } from "../stores/authStore";
 
 export default function Login() {
   const navigate = useNavigate();
+  const setToken = useAuthStore((s) => s.setToken);
+  const loginMutation = useAdminLogin();
   const [pwd, setPwd] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
-    try {
-      const res = await axios.post(`/api/admin/login`, { password: pwd });
-      console.log("Login response:", res.data);
-      localStorage.setItem("admin_token", res.data.token);
-      console.log("Token saved, navigating to admin...");
-      navigate("/admin/appointments");
-    } catch (err: any) {
-      console.error("Login error:", err);
-      if (err.response) {
-        setError(err.response.data?.detail || "Invalid credentials");
-      } else if (err.request) {
-        setError("Unable to connect to server. Please try again.");
-      } else {
-        setError("Invalid password. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
+    loginMutation.mutate(pwd, {
+      onSuccess: (data) => {
+        setToken(data.token);
+        navigate("/admin/appointments");
+      },
+      onError: (err: any) => {
+        if (err.status === 401) {
+          setError(err.detail || "Invalid credentials");
+        } else if (err.status === 0 || !err.status) {
+          setError("Unable to connect to server. Please try again.");
+        } else {
+          setError(err.detail || "Invalid password. Please try again.");
+        }
+      },
+    });
   };
 
   return (
@@ -71,10 +69,10 @@ export default function Login() {
           )}
           <button
             type="submit"
-            disabled={loading}
+            disabled={loginMutation.isPending}
             className="btn-primary w-full justify-center"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loginMutation.isPending ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

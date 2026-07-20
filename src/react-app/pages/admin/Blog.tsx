@@ -1,16 +1,14 @@
-import axios from "axios";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import { useAdminBlog, useCreateBlogPost, useDeleteBlogPost, useUpdateBlogPost } from "../../hooks/useQueries";
 import type { BlogPost } from "../../types";
 
 export default function Blog() {
-  const token = useMemo(() => localStorage.getItem("admin_token"), []);
-  const headers = useMemo(
-    () => (token ? { Authorization: `Bearer ${token}` } : {}),
-    [token]
-  );
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: posts = [], isLoading } = useAdminBlog();
+  const createMutation = useCreateBlogPost();
+  const updateMutation = useUpdateBlogPost();
+  const deleteMutation = useDeleteBlogPost();
+
   const [showForm, setShowForm] = useState(false);
   const [editPost, setEditPost] = useState<BlogPost | null>(null);
   const [form, setForm] = useState({
@@ -23,19 +21,6 @@ export default function Blog() {
     tags: "",
     published: true,
   });
-
-  const loadPosts = () => {
-    setLoading(true);
-    axios
-      .get(`/api/admin/blog`, { headers })
-      .then((r) => setPosts(r.data))
-      .catch(() => { })
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    loadPosts();
-  }, [headers]);
 
   const resetForm = () => {
     setForm({
@@ -52,21 +37,24 @@ export default function Blog() {
     setShowForm(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editPost) {
-      await axios.put(`/api/admin/blog/${editPost.id}`, form, { headers });
+      updateMutation.mutate(
+        { id: editPost.id, ...form },
+        { onSuccess: resetForm },
+      );
     } else {
-      await axios.post(`/api/admin/blog`, form, { headers });
+      createMutation.mutate(
+        form as Omit<BlogPost, "id" | "created_at" | "updated_at">,
+        { onSuccess: resetForm },
+      );
     }
-    loadPosts();
-    resetForm();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Delete this post?")) return;
-    await axios.delete(`/api/admin/blog/${id}`, { headers });
-    loadPosts();
+    deleteMutation.mutate(id);
   };
 
   const startEdit = (post: BlogPost) => {
@@ -169,9 +157,14 @@ export default function Blog() {
           <div className="flex gap-3">
             <button
               type="submit"
+              disabled={createMutation.isPending || updateMutation.isPending}
               className="btn-primary text-sm py-2 px-5"
             >
-              {editPost ? "Update Post" : "Create Post"}
+              {createMutation.isPending || updateMutation.isPending
+                ? "Saving..."
+                : editPost
+                  ? "Update Post"
+                  : "Create Post"}
             </button>
             <button
               type="button"
@@ -184,11 +177,11 @@ export default function Blog() {
         </form>
       )}
 
-      {loading ? (
+      {isLoading ? (
         <p className="text-brand-muted">Loading...</p>
       ) : (
         <div className="space-y-3">
-          {posts.map((post, i) => (
+          {posts.map((post) => (
             <div
               key={post.id}
               className="bg-white rounded-2xl p-4 border border-border flex items-center justify-between gap-4"
@@ -218,7 +211,8 @@ export default function Blog() {
                 </button>
                 <button
                   onClick={() => handleDelete(post.id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  disabled={deleteMutation.isPending}
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                 >
                   <Trash2 size={15} />
                 </button>

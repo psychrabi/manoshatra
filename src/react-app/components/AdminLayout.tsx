@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   BookOpen,
   Calendar,
@@ -6,8 +5,10 @@ import {
   MessageSquare,
   X
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAdminAppointments, useAdminContact } from "../hooks/useQueries";
+import { useAuthStore } from "../stores/authStore";
+import { useUIStore } from "../stores/uiStore";
 import AdminNavbar from "./AdminNavbar";
 
 const navigation = [
@@ -19,47 +20,17 @@ const navigation = [
 
 export default function AdminLayout() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [counts, setCounts] = useState({ appointments: 0, messages: 0 });
-
-  // Check auth synchronously on every render
-  const token = localStorage.getItem("admin_token");
+  const token = useAuthStore((s) => s.token);
   const isAuthenticated = !!token;
+  const sidebarOpen = useUIStore((s) => s.sidebarOpen);
+  const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    const headers = { Authorization: `Bearer ${token}` };
+  const { data: appts } = useAdminAppointments();
+  const { data: msgs } = useAdminContact();
 
-    const fetchCounts = async () => {
-      try {
-        const [apptsRes, msgsRes] = await Promise.all([
-          axios.get("/api/admin/appointments", { headers }),
-          axios.get("/api/admin/contact", { headers }),
-        ]);
-
-        const pendingAppts = apptsRes.data.filter(
-          (a: { status: string }) => a.status === "pending"
-        ).length;
-        const unreadMsgs = msgsRes.data.filter(
-          (m: { read: boolean }) => !m.read
-        ).length;
-
-        setCounts({ appointments: pendingAppts, messages: unreadMsgs });
-      } catch {
-        // silently fail
-      }
-    };
-
-    fetchCounts();
-    const interval = setInterval(fetchCounts, 30000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, token]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
-    window.location.href = "/";
-  };
+  const pendingAppts = appts?.filter((a) => a.status === "pending").length ?? 0;
+  const unreadMsgs = msgs?.filter((m) => !m.read).length ?? 0;
+  const counts = { appointments: pendingAppts, messages: unreadMsgs };
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -143,17 +114,6 @@ export default function AdminLayout() {
               );
             })}
           </nav>
-
-          {/* Footer */}
-          {/* <div className="p-4 border-t border-border">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition-colors"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div> */}
         </div>
       </aside>
 

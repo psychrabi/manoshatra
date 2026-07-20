@@ -1,37 +1,36 @@
-import axios from "axios";
 import { CheckCircle, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
 import { CONTACT_INFO } from "../data/constants";
+import { useSubmitContact } from "../hooks/useQueries";
 
 const initialForm = { name: "", email: "", phone: "", message: "" };
 
 const Contact = () => {
   const [form, setForm] = useState(initialForm);
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const submitMutation = useSubmitContact();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
       setError("Please fill in all required fields.");
       return;
     }
-    setLoading(true);
     setError("");
-    try {
-      await axios.post(`/api/contact`, form);
-      setSuccess(true);
-      setForm(initialForm);
-    } catch {
-      setError("Failed to send message. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    submitMutation.mutate(form, {
+      onSuccess: () => {
+        setSuccess(true);
+        setForm(initialForm);
+      },
+      onError: () => {
+        setError("Failed to send message. Please try again.");
+      },
+    });
   };
 
   return (
@@ -308,11 +307,11 @@ const Contact = () => {
                   )}
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitMutation.isPending}
                     className="btn-primary w-full justify-center"
                     data-testid="contact-submit"
                   >
-                    {loading ? "Sending..." : "Send Message"}
+                    {submitMutation.isPending ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               )}

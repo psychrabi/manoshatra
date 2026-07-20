@@ -1,18 +1,8 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
 import { BookOpen, ExternalLink, Calendar, Users } from "lucide-react";
+import { useResearch } from "../hooks/useQueries";
 
 const Research = () => {
-  const [publications, setPublications] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get(`/api/research`)
-      .then((r) => setPublications(r.data))
-      .catch(() => setPublications([]))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: publications, isLoading } = useResearch();
 
   return (
     <div data-testid="research-page">
@@ -76,7 +66,7 @@ const Research = () => {
             <h2 className="font-heading text-2xl md:text-3xl font-bold text-brand-text mb-8">
               Publications
             </h2>
-            {loading ? (
+            {isLoading ? (
               <div className="space-y-4">
                 {[1, 2].map((i) => (
                   <div
@@ -92,7 +82,7 @@ const Research = () => {
               </div>
             ) : (
               <div className="space-y-6" data-testid="publications-list">
-                {publications.map((pub, i) => (
+                {publications?.map((pub, i) => (
                   <div
                     key={pub.id}
                     className="bg-brand-beige rounded-2xl p-6 md:p-8 card-hover"

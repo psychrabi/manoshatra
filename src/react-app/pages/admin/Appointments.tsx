@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Calendar,
   Check,
@@ -7,10 +6,15 @@ import {
   MoreVertical,
   Phone,
   Trash,
-  User,
-  X,
+  X
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
+import {
+  useAdminAppointments,
+  useDeleteAppointment,
+  useRescheduleAppointment,
+  useUpdateAppointmentStatus,
+} from "../../hooks/useQueries";
 
 interface Appointment {
   id: string;
@@ -25,57 +29,37 @@ interface Appointment {
 }
 
 export default function Appointments() {
-  const token = useMemo(() => localStorage.getItem("admin_token"), []);
-  const headers = useMemo(
-    () => (token ? { Authorization: `Bearer ${token}` } : {}),
-    [token]
-  );
-  const [appts, setAppts] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: appts = [], isLoading } = useAdminAppointments();
   const [reschedulingId, setReschedulingId] = useState<string | null>(null);
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
-  useEffect(() => {
-    axios
-      .get(`/api/admin/appointments`, { headers })
-      .then((r) => setAppts(r.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [headers]);
+  const updateStatusMutation = useUpdateAppointmentStatus();
+  const rescheduleMutation = useRescheduleAppointment();
+  const deleteMutation = useDeleteAppointment();
 
-  const updateStatus = async (id: string, status: Appointment["status"]) => {
-    await axios.patch(
-      `/api/admin/appointments/${id}/status`,
-      { status },
-      { headers }
-    );
-    setAppts((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
-    setOpenDropdownId(null);
+  const updateStatus = (id: string, status: Appointment["status"]) => {
+    updateStatusMutation.mutate({ id, status }, {
+      onSuccess: () => setOpenDropdownId(null),
+    });
   };
 
-  const handleReschedule = async (id: string) => {
+  const handleReschedule = (id: string) => {
     if (!rescheduleDate) return;
-    await axios.patch(
-      `/api/admin/appointments/${id}/reschedule`,
-      { preferred_date: rescheduleDate },
-      { headers }
-    );
-    setAppts((prev) =>
-      prev.map((a) =>
-        a.id === id ? { ...a, preferred_date: rescheduleDate } : a
-      )
-    );
-    setReschedulingId(null);
-    setRescheduleDate("");
-    setOpenDropdownId(null);
+    rescheduleMutation.mutate({ id, preferred_date: rescheduleDate }, {
+      onSuccess: () => {
+        setReschedulingId(null);
+        setRescheduleDate("");
+        setOpenDropdownId(null);
+      },
+    });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Delete this appointment?")) return;
-    await axios.delete(`/api/admin/appointments/${id}`, { headers });
-    setAppts((prev) => prev.filter((a) => a.id !== id));
-    setOpenDropdownId(null);
+    deleteMutation.mutate(id, {
+      onSuccess: () => setOpenDropdownId(null),
+    });
   };
 
   const statusConfig = {
@@ -129,7 +113,7 @@ export default function Appointments() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div>
         <h1 className="font-heading text-2xl font-bold text-brand-text mb-6">
@@ -252,7 +236,7 @@ export default function Appointments() {
                       <button
                         onClick={() =>
                           setOpenDropdownId(
-                            openDropdownId === a.id ? null : a.id
+                            openDropdownId === a.id ? null : a.id,
                           )
                         }
                         className="p-2 text-brand-muted hover:bg-brand-beige rounded-xl transition-colors"
@@ -266,17 +250,21 @@ export default function Appointments() {
                             className="fixed inset-0 z-10"
                             onClick={() => setOpenDropdownId(null)}
                           />
-                          <div className="absolute right-0 mt-1 bg-white rounded-xl shadow-lg border border-border py-1.5 z-20 min-w-[180px]">
+                          <div className="absolute right-0 mt-1 bg-white rounded-xl shadow-lg border border-border py-1.5 z-20 min-w-45">
                             {a.status === "pending" && (
                               <>
                                 <button
-                                  onClick={() => updateStatus(a.id, "confirmed")}
+                                  onClick={() =>
+                                    updateStatus(a.id, "confirmed")
+                                  }
                                   className="w-full flex items-center gap-2.5 text-sm text-emerald-600 px-4 py-2.5 hover:bg-emerald-50 transition-colors"
                                 >
                                   <Check size={16} /> Confirm
                                 </button>
                                 <button
-                                  onClick={() => updateStatus(a.id, "cancelled")}
+                                  onClick={() =>
+                                    updateStatus(a.id, "cancelled")
+                                  }
                                   className="w-full flex items-center gap-2.5 text-sm text-red-600 px-4 py-2.5 hover:bg-red-50 transition-colors"
                                 >
                                   <X size={16} /> Cancel
@@ -296,7 +284,9 @@ export default function Appointments() {
                                   <Clock size={16} /> Reschedule
                                 </button>
                                 <button
-                                  onClick={() => updateStatus(a.id, "cancelled")}
+                                  onClick={() =>
+                                    updateStatus(a.id, "cancelled")
+                                  }
                                   className="w-full flex items-center gap-2.5 text-sm text-red-600 px-4 py-2.5 hover:bg-red-50 transition-colors"
                                 >
                                   <X size={16} /> Cancel
@@ -332,9 +322,10 @@ export default function Appointments() {
                       />
                       <button
                         onClick={() => handleReschedule(a.id)}
-                        className="text-sm bg-brand-green text-white px-5 py-2 rounded-xl font-semibold hover:bg-brand-green-light transition-colors"
+                        disabled={rescheduleMutation.isPending}
+                        className="text-sm bg-brand-green text-white px-5 py-2 rounded-xl font-semibold hover:bg-brand-green-light transition-colors disabled:opacity-50"
                       >
-                        Save
+                        {rescheduleMutation.isPending ? "Saving..." : "Save"}
                       </button>
                       <button
                         onClick={() => {

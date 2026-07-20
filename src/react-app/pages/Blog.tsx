@@ -1,31 +1,21 @@
-import axios from "axios";
 import { Calendar, User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useBlogList } from "../hooks/useQueries";
 import type { BlogPost } from "../types";
 
 const Blog = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [category, setCategory] = useState("All");
   const LIMIT = 9;
 
-  useEffect(() => {
-    axios
-      .get(`/api/blog?page=${page}&limit=${LIMIT}`)
-      .then((r) => {
-        setPosts(r.data.posts || []);
-        setTotal(r.data.total || 0);
-      })
-      .catch(() => setPosts([]))
-      .finally(() => setLoading(false));
-  }, [page]);
+  const { data, isLoading, isPlaceholderData } = useBlogList(page, LIMIT);
+  const posts = data?.posts || [];
+  const total = data?.total || 0;
 
-  const categories = ["All", ...new Set(posts.map((p) => p.category))];
+  const categories = ["All", ...new Set(posts.map((p: BlogPost) => p.category))];
   const filtered =
-    category === "All" ? posts : posts.filter((p) => p.category === category);
+    category === "All" ? posts : posts.filter((p: BlogPost) => p.category === category);
 
   return (
     <div data-testid="blog-page">
@@ -65,7 +55,7 @@ const Blog = () => {
             ))}
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
@@ -92,8 +82,8 @@ const Blog = () => {
               <p className="mt-2">Check back soon for new content.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((post, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ opacity: isPlaceholderData ? 0.5 : 1 }}>
+              {filtered.map((post: BlogPost, i: number) => (
                 <Link
                   key={post.id}
                   to={`/blog/${post.id}`}

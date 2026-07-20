@@ -14,9 +14,3 @@ export function makeId(): string {
 export function nowUtc(): string {
   return new Date().toISOString();
 }
-
-export function cleanDoc(doc: any) {
-  if (!doc) return null;
-  // In SQLite, maybe we just want to ensure published/read flags are parsed
-  return doc;
-}

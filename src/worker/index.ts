@@ -12,7 +12,7 @@ import type {
   UpdateBlogPostRequest,
   UpdateStatusRequest,
 } from "../shared/types";
-import { Env, cleanDoc, makeId, nowUtc } from "./db";
+import { Env, makeId, nowUtc } from "./db";
 import {
   AdminLoginSchema,
   AppointmentCreateSchema,
@@ -26,22 +26,49 @@ import {
 
 const app = new Hono<{ Bindings: Env }>();
 
+// Rate limiting store (in-memory, resets on worker restart)
+const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = loginAttempts.get(ip);
+
+  if (!record || now > record.resetAt) {
+    loginAttempts.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 }); // 15 min window
+    return true;
+  }
+
+  if (record.count >= 5) {
+    return false; // Too many attempts
+  }
+
+  record.count++;
+  return true;
+}
+
 // Middleware for CORS
 app.use("*", async (c, next) => {
-  const origins = c.env.CORS_ORIGINS ? c.env.CORS_ORIGINS.split(",") : ["*"];
-  const corsMiddleware = cors({
-    origin: origins,
-    allowHeaders: ["*"],
-    allowMethods: ["*"],
-    credentials: true,
-  });
-  return corsMiddleware(c, next);
+  if (c.env.CORS_ORIGINS) {
+    const origins = c.env.CORS_ORIGINS.split(",");
+    const corsMiddleware = cors({
+      origin: origins,
+      allowHeaders: ["Content-Type", "Authorization"],
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      credentials: true,
+    });
+    return corsMiddleware(c, next);
+  }
+  // No CORS_ORIGINS configured - same-origin requests work without CORS headers
+  return next();
 });
 
 // JWT Middleware wrapper
 const verifyToken = async (c: any, next: any) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-  const secret = c.env.JWT_SECRET_KEY || "manoshastra-default-secret";
+  const secret = c.env.JWT_SECRET_KEY;
+  if (!secret) {
+    return c.json({ error: "Server configuration error" }, 500);
+  }
   const jwtMiddleware = jwt({
     secret: secret,
     alg: "HS256",
@@ -72,9 +99,19 @@ app.post(
   "/api/admin/login",
   zValidator("json", AdminLoginSchema),
   async (c) => {
+    // Rate limiting
+    const clientIP = c.req.header("cf-connecting-ip") || "unknown";
+    if (!checkRateLimit(clientIP)) {
+      return c.json({ detail: "Too many login attempts. Please try again later." }, 429);
+    }
+
     const data = c.req.valid("json") as { password: string };
-    const adminPassword = c.env.ADMIN_PASSWORD || "ManoShastra@2024";
-    const secret = c.env.JWT_SECRET_KEY || "manoshastra-default-secret";
+    const adminPassword = c.env.ADMIN_PASSWORD;
+    const secret = c.env.JWT_SECRET_KEY;
+
+    if (!adminPassword || !secret) {
+      return c.json({ error: "Server configuration error" }, 500);
+    }
 
     if (data.password !== adminPassword) {
       return c.json({ detail: "Invalid credentials" }, 401);
@@ -160,7 +197,7 @@ app.post(
       console.error("Failed to send appointment email:", emailError);
     }
 
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 
@@ -188,7 +225,7 @@ app.patch(
       .prepare("SELECT * FROM appointments WHERE id = ?")
       .bind(c.req.param("id"))
       .first();
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 
@@ -207,7 +244,7 @@ app.patch(
       .prepare("SELECT * FROM appointments WHERE id = ?")
       .bind(c.req.param("id"))
       .first();
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 
@@ -303,7 +340,7 @@ app.post(
       .prepare("SELECT * FROM blog_posts WHERE id = ?")
       .bind(id)
       .first();
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 
@@ -360,7 +397,7 @@ app.put(
       .prepare("SELECT * FROM blog_posts WHERE id = ?")
       .bind(post_id)
       .first();
-    return c.json(cleanDoc(updated));
+    return c.json(updated);
   }
 );
 
@@ -420,7 +457,7 @@ app.post(
       .prepare("SELECT * FROM research WHERE id = ?")
       .bind(id)
       .first();
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 
@@ -542,7 +579,7 @@ app.post(
       .prepare("SELECT * FROM testimonials WHERE id = ?")
       .bind(id)
       .first();
-    return c.json(cleanDoc(result));
+    return c.json(result);
   }
 );
 

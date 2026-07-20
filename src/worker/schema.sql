@@ -58,3 +58,14 @@ CREATE TABLE testimonials (
     rating INTEGER NOT NULL DEFAULT 5,
     created_at TEXT NOT NULL
 );
+
+-- Performance indexes
+CREATE INDEX idx_appointments_status ON appointments(status);
+CREATE INDEX idx_appointments_created_at ON appointments(created_at);
+CREATE INDEX idx_blog_posts_category ON blog_posts(category);
+CREATE INDEX idx_blog_posts_published ON blog_posts(published);
+CREATE INDEX idx_blog_posts_created_at ON blog_posts(created_at);
+CREATE INDEX idx_research_year ON research(year);
+CREATE INDEX idx_contact_messages_read ON contact_messages(read);
+CREATE INDEX idx_contact_messages_created_at ON contact_messages(created_at);
+CREATE INDEX idx_testimonials_created_at ON testimonials(created_at);

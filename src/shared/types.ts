@@ -1,8 +1,6 @@
 // Shared TypeScript types for ManoShastra application
 // These types are used by both the React frontend and Cloudflare Worker backend
 
-import React from "react";
-
 // ==================== DATABASE ENTITY TYPES ====================
 
 // Blog Post entity (matches D1 database schema)
@@ -281,12 +279,6 @@ export type IconName =
   | "users-round"
   | "calendar"
   | "award";
-
-export type LucideIconType = React.ElementType;
-
-export interface IconMap {
-  [key: string]: LucideIconType;
-}
 
 // API Response Types
 export interface PaginatedResponse<T> {

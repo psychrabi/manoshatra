@@ -59,7 +59,7 @@ export const TestimonialCreateSchema = z.object({
 });
 
 export const StatusUpdateSchema = z.object({
-  status: z.string(),
+  status: z.enum(["pending", "confirmed", "cancelled"]),
 });
 
 // Type inference from schemas

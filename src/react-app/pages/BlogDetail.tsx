@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import DOMPurify from "dompurify";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
-import type { BlogPost } from "../types";
+import { useBlogDetail } from "../hooks/useQueries";
 
 function formatContent(content: string) {
   if (!content) return "";
-  return content
+  const html = content
     .split("\n")
     .map((line: string) => {
       if (line.startsWith("**") && line.endsWith("**")) {
@@ -27,23 +26,14 @@ function formatContent(content: string) {
       return `<p style="margin-bottom:1rem;line-height:1.8">${line}</p>`;
     })
     .join("");
+  return DOMPurify.sanitize(html);
 }
 
 const BlogDetail = () => {
   const { id } = useParams();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { data: post, isLoading, isError } = useBlogDetail(id);
 
-  useEffect(() => {
-    axios
-      .get(`/api/blog/${id}`)
-      .then((r) => setPost(r.data))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading)
+  if (isLoading)
     return (
       <div className="min-h-screen bg-white flex items-center justify-center pt-20">
         <div className="animate-pulse space-y-4 w-full max-w-2xl mx-4">
@@ -55,7 +45,7 @@ const BlogDetail = () => {
       </div>
     );
 
-  if (error || !post)
+  if (isError || !post)
     return (
       <div className="min-h-screen bg-white flex items-center justify-center pt-20">
         <div className="text-center">
@@ -79,7 +69,7 @@ const BlogDetail = () => {
             alt={post.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <div className="container mx-auto max-w-4xl">
               <span className="text-xs font-bold text-white bg-brand-green px-3 py-1 rounded-full">

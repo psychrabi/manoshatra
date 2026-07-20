@@ -1,7 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { CheckCircle, Calendar, Clock, Phone } from "lucide-react";
 import { SERVICE_OPTIONS, CONTACT_INFO } from "../data/constants";
+import { useSubmitAppointment } from "../hooks/useQueries";
 
 const initialForm = {
   name: "",
@@ -14,9 +14,9 @@ const initialForm = {
 
 const Appointments = () => {
   const [form, setForm] = useState(initialForm);
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const submitMutation = useSubmitAppointment();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -24,7 +24,7 @@ const Appointments = () => {
     >,
   ) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
       !form.name ||
@@ -36,17 +36,16 @@ const Appointments = () => {
       setError("Please fill in all required fields.");
       return;
     }
-    setLoading(true);
     setError("");
-    try {
-      await axios.post(`/api/appointments`, form);
-      setSuccess(true);
-      setForm(initialForm);
-    } catch {
-      setError("Something went wrong. Please try again or call us directly.");
-    } finally {
-      setLoading(false);
-    }
+    submitMutation.mutate(form, {
+      onSuccess: () => {
+        setSuccess(true);
+        setForm(initialForm);
+      },
+      onError: () => {
+        setError("Something went wrong. Please try again or call us directly.");
+      },
+    });
   };
 
   return (
@@ -289,11 +288,11 @@ const Appointments = () => {
 
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={submitMutation.isPending}
                     className="btn-primary w-full justify-center text-base"
                     data-testid="appt-submit"
                   >
-                    {loading ? "Submitting..." : "Request Appointment"}
+                    {submitMutation.isPending ? "Submitting..." : "Request Appointment"}
                   </button>
                   <p className="text-brand-muted text-xs text-center">
                     By submitting, you agree that your information will be used
