@@ -47,11 +47,11 @@
     "dev": "vite",
     "lint": "eslint .",
     "preview": "npm run build && vite preview",
-    "d1:create": "wrangler d1 create manoshatra-db",
+    "d1:create": "wrangler d1 create manoshastra-db",
     "d1:setup": "bash setup-d1.sh",
-    "d1:migrate": "wrangler d1 execute manoshatra-db --file=src/worker/schema.sql",
-    "d1:seed": "wrangler d1 execute manoshatra-db --file=src/worker/seed.sql",
-    "d1:local": "wrangler d1 execute manoshatra-db --local"
+    "d1:migrate": "wrangler d1 execute manoshastra-db --file=src/worker/schema.sql",
+    "d1:seed": "wrangler d1 execute manoshastra-db --file=src/worker/seed.sql",
+    "d1:local": "wrangler d1 execute manoshastra-db --local"
   },
   "type": "module"
 }

@@ -123,15 +123,6 @@ export const TEAM: TeamMember[] = [
   },
   {
     id: 4,
-    name: "Sarita Shrestha",
-    designation: "Counseling Psychologist",
-    license: "",
-    bio: "Sarita blends psychological insight with cultural wisdom to create inclusive, joyful spaces for healing and growth. Her approach emphasizes emotional resilience, self-awareness, and community connection. Through creative methods like music, games, and participatory activities.",
-    initials: "SS",
-    color: "bg-sky-500",
-  },
-  {
-    id: 5,
     name: "Pammi Thakur",
     designation: "Counseling Psychologist",
     license: "",
@@ -140,9 +131,19 @@ export const TEAM: TeamMember[] = [
     color: "bg-teal-500",
   },
   {
+    id: 5,
+    name: "Sarita Shrestha",
+    designation: "Mental Health Counselor",
+    license: "",
+    bio: "Sarita blends psychological insight with cultural wisdom to create inclusive, joyful spaces for healing and growth. Her approach emphasizes emotional resilience, self-awareness, and community connection. Through creative methods like music, games, and participatory activities.",
+    initials: "SS",
+    color: "bg-sky-500",
+  },
+
+  {
     id: 6,
     name: "Sharda Nepal",
-    designation: "Counseling Psychologist",
+    designation: "Mental Health Counselor",
     license: "",
     bio: "Sharda works with adolescents and adults experiencing difficulties such as anxiety, depression, ADHD, relationship issues, and other emotional or life challenges. Her approach focuses on emotional awareness, resilience, and practical coping.",
     initials: "SN",

@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   BookOpen,
   Calendar,
@@ -5,25 +6,55 @@ import {
   MessageSquare,
   X
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import AdminNavbar from "./AdminNavbar";
 
 const navigation = [
-  { name: "Appointments", href: "/admin/appointments", icon: Calendar },
+  { name: "Appointments", href: "/admin/appointments", icon: Calendar, badge: "appointments" as const },
+  { name: "Contact Messages", href: "/admin/messages", icon: MessageSquare, badge: "messages" as const },
   { name: "Blog Posts", href: "/admin/blog", icon: BookOpen },
   { name: "Research", href: "/admin/research", icon: FlaskConical },
-  { name: "Messages", href: "/admin/messages", icon: MessageSquare },
 ];
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [counts, setCounts] = useState({ appointments: 0, messages: 0 });
 
   // Check auth synchronously on every render
   const token = localStorage.getItem("admin_token");
   const isAuthenticated = !!token;
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const fetchCounts = async () => {
+      try {
+        const [apptsRes, msgsRes] = await Promise.all([
+          axios.get("/api/admin/appointments", { headers }),
+          axios.get("/api/admin/contact", { headers }),
+        ]);
+
+        const pendingAppts = apptsRes.data.filter(
+          (a: { status: string }) => a.status === "pending"
+        ).length;
+        const unreadMsgs = msgsRes.data.filter(
+          (m: { read: boolean }) => !m.read
+        ).length;
+
+        setCounts({ appointments: pendingAppts, messages: unreadMsgs });
+      } catch {
+        // silently fail
+      }
+    };
+
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, token]);
 
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
@@ -84,6 +115,7 @@ export default function AdminLayout() {
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.href;
+              const badgeCount = item.badge ? counts[item.badge] : 0;
               return (
                 <Link
                   key={item.name}
@@ -95,7 +127,18 @@ export default function AdminLayout() {
                     }`}
                 >
                   <Icon size={18} />
-                  {item.name}
+                  <span className="flex-1">{item.name}</span>
+                  {badgeCount > 0 && (
+                    <span
+                      className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {badgeCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

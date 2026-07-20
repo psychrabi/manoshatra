@@ -29,23 +29,28 @@ const Team = () => {
                 <div className={`team-avatar ${member.color} text-xl`}>
                   {member.initials}
                 </div>
-                <h2 className="font-heading font-bold text-brand-text text-lg mb-1">
+                <h2 className="font-heading font-bold text-brand-text text-lg mb-2">
                   {member.name}
                 </h2>
-             
-                <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-2">
-                  {member.designation}
-                </span> <br />
-                {member.level && (
-                  <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-2">
-                    {member.level}
+                <div className="flex flex-col items-center gap-0.5 mb-2">
+                  <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full">
+                    {member.designation}
                   </span>
-                )} <br />
-                
-                <span className={`inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full mb-4 ${member.license ? '' : 'invisible'}`}>
-                  {member.license}
-                </span>
-               
+
+                  {member.level && (
+                    <span className="inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full">
+                      {member.level}
+                    </span>
+                  )}
+
+                 {member.license && (<span
+                    className={`inline-block bg-green-50 text-brand-green text-xs font-bold px-3 py-1 rounded-full  ${member.license ? "" : "invisible"}`}
+                  >
+                    {member.license}
+                  </span>
+                  )}
+                </div>
+
                 <p className="text-brand-muted text-sm leading-relaxed">
                   {member.bio}
                 </p>

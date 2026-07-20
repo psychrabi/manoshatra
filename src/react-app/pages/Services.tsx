@@ -149,7 +149,7 @@ const Services = () => {
                   </div>
                   {detail.details && (
                     <div
-                      className={`bg-white rounded-2xl p-6 shadow-sm ${
+                      className={`flex flex-col h-full justify-center p-6 ${
                         isEven ? "" : "lg:order-1"
                       }`}
                     >

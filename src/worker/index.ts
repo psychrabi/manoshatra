@@ -122,6 +122,44 @@ app.post(
       .prepare("SELECT * FROM appointments WHERE id = ?")
       .bind(id)
       .first();
+
+    // Send email notification via Resend
+    try {
+      const emailHtml = `
+        <h2>New Appointment Request</h2>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Phone:</strong> ${data.phone}</p>
+        <p><strong>Service:</strong> ${data.service}</p>
+        <p><strong>Preferred Date:</strong> ${data.preferred_date}</p>
+        ${data.message ? `<p><strong>Message:</strong> ${data.message}</p>` : ''}
+        <p><strong>Status:</strong> Pending</p>
+        <p><strong>Appointment ID:</strong> ${id}</p>
+      `;
+
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${c.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "ManoShastra Appointments <noreply@manoshastra.com.np>",
+          to: ["appointment@manoshastra.com.np"],
+          subject: `New Appointment Request from ${data.name}`,
+          html: emailHtml,
+          text: `New Appointment Request\n\nName: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}\nService: ${data.service}\nPreferred Date: ${data.preferred_date}\n${data.message ? `Message: ${data.message}\n` : ''}Status: Pending\nAppointment ID: ${id}`,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Failed to send appointment email:", error);
+      }
+    } catch (emailError) {
+      console.error("Failed to send appointment email:", emailError);
+    }
+
     return c.json(cleanDoc(result));
   }
 );
@@ -416,6 +454,40 @@ app.post("/api/contact", zValidator("json", ContactCreateSchema), async (c) => {
       created_at
     )
     .run();
+
+  // Send email notification via Resend
+  try {
+    const emailHtml = `
+      <h2>New Contact Message</h2>
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Email:</strong> ${data.email}</p>
+      ${data.phone ? `<p><strong>Phone:</strong> ${data.phone}</p>` : ''}
+      <p><strong>Message:</strong></p>
+      <p>${data.message}</p>
+    `;
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${c.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "ManoShastra Contact <noreply@manoshastra.com.np>",
+        to: ["appointment@manoshastra.com.np"],
+        subject: `New Contact Message from ${data.name}`,
+        html: emailHtml,
+        text: `New Contact Message\n\nName: ${data.name}\nEmail: ${data.email}\n${data.phone ? `Phone: ${data.phone}\n` : ''}Message: ${data.message}`,
+      }),
+    });
+
+    if (!res.ok) {
+      const error = await res.text();
+      console.error("Failed to send contact email:", error);
+    }
+  } catch (emailError) {
+    console.error("Failed to send contact email:", emailError);
+  }
 
   return c.json({ message: "Message sent successfully", id });
 });
